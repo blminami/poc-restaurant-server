@@ -1,0 +1,49 @@
+<app-main-menu></app-main-menu>
+<main id="inn">
+    <div class="innertube">
+        <div class="container">
+            <ul class="plans">
+
+                <li class="plan highlight">
+                    <span *ngIf="userAccount.username !== 'root@root'" class="glyphicon glyphicon-user glyphicon-user2 glyphicon-user2-green"></span>
+                    <span *ngIf="userAccount.username === 'root@root'" class="glyphicon glyphicon-user glyphicon-user2 glyphicon-user2-red"></span>
+
+                    <div class="details">
+                        <h1 class="plan-title">{{userAccount.firstName}} {{userAccount.lastName}}</h1>
+                        <p class="plan-description">{{userAccount.email}}</p>
+                    </div>
+                </li>
+
+            </ul>
+            <table *ngIf="userAccount.username !== 'root@root' &&  userAccount.firstName!=='Restaurant'" class="table table-striped custab ">
+                <thead>
+                    <tr>
+                        <th>Nr. order</th>
+                        <th>Date</th>
+                        <th>Status
+                        </th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of orders " [class.selected]="item === itemSelected" (click)="onSelect(item)">
+                        <td>{{item.id}}</td>
+                        <td>{{item.date | date: 'dd/MM/yyyy'}}</td>
+                        <td *ngIf="item.statusOrder === 'Pending'"><span class="label label-warning ">{{item.statusOrder}}</span></td>
+                        <td *ngIf="item.statusOrder === 'Delivered'"><span class="label label-success">{{item.statusOrder}}</span></td>
+                        <td *ngIf="item.statusOrder === 'Processed'"><span class="label label-info ">{{item.statusOrder}}</span></td>
+                        <td *ngIf="item.statusOrder === 'Canceled'"><span class="label label-danger ">{{item.statusOrder}}</span></td>
+                        <td>
+                            <div class="navbar-tool">
+                                <button type="button" class="btn btn-default btn-xs cursor " data-toggle="modal" data-target="#myModal3">
+                    <span class="glyphicon glyphicon-eye-open"></span>
+                  </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+<app-user-items-modal [id]="orderSelected.id"></app-user-items-modal>

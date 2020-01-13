@@ -1,0 +1,55 @@
+<app-main-menu></app-main-menu>
+
+<main>
+    <div class="innertube">
+        <div class="container">
+            <table *ngIf="user.firstName ==='Restaurant'" class="table table-striped custab ">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Date</th>
+                        <th>Status
+                        </th>
+                        <th>Address</th>
+                        <th>Confirm</th>
+                        <th>Reject</th>
+                        <th>Deliver</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let order of orders " [class.selected]="order === orderSelected" (click)="onSelect(order)">
+                        <td>{{order.id}}</td>
+                        <td>{{order.date  | date: 'dd/MM/yyyy'}}</td>
+                        <td *ngIf="order.statusOrder === 'Pending'"><span class="label label-warning ">{{order.statusOrder}}</span></td>
+                        <td *ngIf="order.statusOrder === 'Delivered'"><span class="label label-success">{{order.statusOrder}}</span></td>
+                        <td *ngIf="order.statusOrder === 'Processed'"><span class="label label-info ">{{order.statusOrder}}</span></td>
+                        <td *ngIf="order.statusOrder === 'Canceled'"><span class="label label-danger ">{{order.statusOrder}}</span></td>
+                        <td>{{order.address}}</td>
+                        <td>
+                            <div class="navbar-tool">
+                                <button type="button" [disabled]="order.trigger1" class="btn btn-info btn-xs cursor " (click)="acceptOrder()">
+                    <span class="glyphicon glyphicon-ok"></span>
+                  </button>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="navbar-tool">
+                                <button type="button" [disabled]="order.trigger2" class="btn btn-danger btn-xs cursor " (click)="refuseOrder()">
+                    <span class="glyphicon glyphicon-trash"></span>
+                  </button>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="navbar-tool">
+                                <button type="button" [disabled]="order.trigger3" class="btn btn-success btn-xs cursor " (click)="deliverOrder()">
+                    <span class="glyphicon glyphicon-shopping-cart"></span>
+                  </button>
+                            </div>
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>

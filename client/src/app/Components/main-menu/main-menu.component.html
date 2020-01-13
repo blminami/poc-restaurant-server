@@ -1,0 +1,34 @@
+<nav id="nav">
+
+  <div class="innertube">
+
+    <h2 class="h3">
+      <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+    </h2>
+    <div class="nume">{{user.firstName}} {{user.lastName}}</div>
+    <ul>
+      <li>
+        <a routerLink="/home-page" routerLinkActive="active">Menu</a>
+      </li>
+      <li>
+        <a *ngIf="user.firstName!== 'Restaurant'" routerLink="/orders" routerLinkActive="active">Confirm Order</a>
+        <a *ngIf="user.firstName == 'Restaurant'" routerLink="/restaurant-confirm-orders" routerLinkActive="active">Confirm Order</a>
+
+      </li>
+      <!-- <li>-->
+      <!--  <a  routerLink="/restaurants" routerLinkActive="active">Restaurants</a>-->
+      <!--</li>-->
+      <li>
+        <a  *ngIf="user.firstName!== 'Restaurant'" routerLink="/user-profile" routerLinkActive="active">My Profile</a>
+      </li>
+      
+    </ul>
+    <ul style="position:absolute;bottom: 0px">
+
+      <li>
+        <a routerLink="/login" routerLinkActive="active">Logout</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+ 
