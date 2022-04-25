@@ -1,41 +1,81 @@
 <main id="myMain">
-    <p-growl [(value)]="msgs"></p-growl>  
+  <p-growl [(value)]="msgs"></p-growl>
   <div class="login-wrap">
-        <div class="login-html">
-            <input id="tab-1" type="radio" name="tab" class="sign-in" checked><label for="tab-1" class="tab">Sign In</label>
-            <div class="login-form">
-                <div class="sign-in-htm">
-                    <div class="group">
-                        <label for="user" class="label">First Name</label>
-                        <input id="userFirstName" type="text" class="input" [(ngModel)]="user.firstName" [ngModelOptions]="{standalone: true}">
-                    </div>
-                    <div class="group">
-                        <label for="user" class="label">Last Name</label>
-                        <input id="userLastName" type="text" class="input" [(ngModel)]="user.lastName" [ngModelOptions]="{standalone: true}">
-                    </div>
-                    <div class="group">
-                        <label for="user" class="label">Email</label>
-                        <input id="userEmail" type="text" class="input" [(ngModel)]="user.email" [ngModelOptions]="{standalone: true}">
-                    </div>
-                    <div class="group">
-                        <label for="user" class="label">Username</label>
-                        <input id="userUsername" type="text" class="input" [(ngModel)]="user.username" [ngModelOptions]="{standalone: true}">
-                    </div>
-                    <div class="group">
-                        <label for="pass" class="label">Password</label>
-                        <input id="pass" type="password" class="input" data-type="password" [(ngModel)]="user.password" [ngModelOptions]="{standalone: true}">
-                    </div>
-                    
-                    <div class="group">
-                        <input type="submit" class="button" value="Create account" (click)="createAccount()" readonly>
+    <div class="login-html">
+      <input id="tab-1" type="radio" name="tab" class="sign-in" checked /><label
+        for="tab-1"
+        class="tab"
+        >Sign In</label
+      >
+      <div class="login-form">
+        <div class="sign-in-htm">
+          <div class="group">
+            <label for="user" class="label">First Name</label>
+            <input
+              id="userFirstName"
+              type="text"
+              class="input"
+              [(ngModel)]="user.firstName"
+              [ngModelOptions]="{ standalone: true }"
+            />
+          </div>
+          <div class="group">
+            <label for="user" class="label">Last Name</label>
+            <input
+              id="userLastName"
+              type="text"
+              class="input"
+              [(ngModel)]="user.lastName"
+              [ngModelOptions]="{ standalone: true }"
+            />
+          </div>
+          <div class="group">
+            <label for="user" class="label">Email</label>
+            <input
+              id="userEmail"
+              type="text"
+              class="input"
+              [(ngModel)]="user.email"
+              [ngModelOptions]="{ standalone: true }"
+            />
+          </div>
+          <div class="group">
+            <label for="user" class="label">Username</label>
+            <input
+              id="userUsername"
+              type="text"
+              class="input"
+              [(ngModel)]="user.username"
+              [ngModelOptions]="{ standalone: true }"
+            />
+          </div>
+          <div class="group">
+            <label for="pass" class="label">Password</label>
+            <input
+              id="pass"
+              type="password"
+              class="input"
+              data-type="password"
+              [(ngModel)]="user.password"
+              [ngModelOptions]="{ standalone: true }"
+            />
+          </div>
 
-                    </div>
-                    <div class="hr"></div>
-                   <div class="foot-lnk">
+          <div class="group">
+            <input
+              type="submit"
+              class="button"
+              value="Create account"
+              (click)="createAccount()"
+              readonly
+            />
+          </div>
+          <div class="hr"></div>
+          <div class="foot-lnk">
             <a routerLink="/login" routerLinkActive="active">Back</a>
           </div>
-                </div>
-            </div>
         </div>
+      </div>
     </div>
+  </div>
 </main>

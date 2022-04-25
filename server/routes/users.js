@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-let models = require('../models/')
+let models = require('../models/');
 var userService = require('../services/user.service.js');
 var nodemailer = require('nodemailer');
 
@@ -8,9 +8,8 @@ router.post('/authenticate', authenticate);
 router.post('/register', register);
 router.get('/current', getCurrent);
 
-var email = process.env.MAILER_EMAIL_ID || 'minca.narcisa@gmail.com',
-  pass = process.env.MAILER_PASSWORD || 'rockyrocky'
-
+var email = process.env.MAILER_EMAIL_ID;
+pass = process.env.MAILER_PASSWORD;
 
 var smtpTransport = nodemailer.createTransport({
   service: process.env.MAILER_SERVICE_PROVIDER || 'Gmail',
@@ -22,52 +21,49 @@ var smtpTransport = nodemailer.createTransport({
   }
 });
 
-
 router.get('', (req, res) => {
-
-  models.user.findAll()
+  models.user
+    .findAll()
     .then((users) => res.status(200).json(users))
     .catch((err) => {
       console.log(err);
-      res.status(500).send('oups...')
-
-    })
-
-})
+      res.status(500).send('oups...');
+    });
+});
 
 router.post('', (req, res) => {
-  models.user.create(req.body)
+  models.user
+    .create(req.body)
     .then(() => res.status(200).send('yey'))
-    .catch(() => res.status(500).send('oups...'))
-})
-
-
+    .catch(() => res.status(500).send('oups...'));
+});
 
 module.exports = router;
 
 function authenticate(req, res) {
-  userService.authenticate(req.body.username, req.body.password)
-    .then(function(user) {
+  userService
+    .authenticate(req.body.username, req.body.password)
+    .then(function (user) {
       if (user) {
         // authentication successful
         res.send(user);
-      }
-      else {
+      } else {
         // authentication failed
         res.status(400).send('Username or password is incorrect');
       }
     })
-    .catch(function(err) {
+    .catch(function (err) {
       res.status(400).send(err);
     });
 }
 
 function register(req, res) {
-  console.log("Registerrrr")
-  userService.create(req.body)
-    .then(function() {
-
-      var htmlBody = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  console.log('Registerrrr');
+  userService
+    .create(req.body)
+    .then(function () {
+      var htmlBody =
+        `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -111,7 +107,11 @@ width: 100% !important; height: 100%; margin: 0; line-height: 1.4; background-co
                   
                   <tr>
                     <td class="content-cell" style="box-sizing: border-box; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; padding: 35px; word-break: break-word;">
-                      <h1 style="box-sizing: border-box; color: #2F3133; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 19px; font-weight: bold; margin-top: 0;" align="left">Hi, ` + req.body.firstName + " " + req.body.lastName + `!</h1>
+                      <h1 style="box-sizing: border-box; color: #2F3133; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 19px; font-weight: bold; margin-top: 0;" align="left">Hi, ` +
+        req.body.firstName +
+        ' ' +
+        req.body.lastName +
+        `!</h1>
                       <p style="box-sizing: border-box; color: #74787E; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 16px; line-height: 1.5em; margin-top: 0;" align="left">Welcome! We’re thrilled to have you join our community.Use the button below to set up your account and get started:</p>
                       
                       <table class="body-action" align="center" width="100%" cellpadding="0" cellspacing="0" style="box-sizing: border-box; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; margin: 30px auto; padding: 0; text-align: center; width: 100%;">
@@ -157,39 +157,38 @@ width: 100% !important; height: 100%; margin: 0; line-height: 1.4; background-co
       </tr>
     </table>
   </body>
-</html>`
+</html>`;
       var data = {
         to: req.body.email,
         from: email,
         subject: 'Invitation',
         html: htmlBody
       };
-      smtpTransport.sendMail(data, function(err) {
+      smtpTransport.sendMail(data, function (err) {
         if (!err) {
           return res.json({ message: 'Password reset' });
-        }
-        else {
+        } else {
           return console.log(err);
         }
       });
       res.sendStatus(200);
     })
-    .catch(function(err) {
+    .catch(function (err) {
       res.status(400).send(err);
     });
 }
 
 function getCurrent(req, res) {
-  userService.getById(req.user.sub)
-    .then(function(user) {
+  userService
+    .getById(req.user.sub)
+    .then(function (user) {
       if (user) {
         res.send(user);
-      }
-      else {
+      } else {
         res.sendStatus(404);
       }
     })
-    .catch(function(err) {
+    .catch(function (err) {
       res.status(400).send(err);
     });
 }

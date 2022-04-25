@@ -1,15 +1,15 @@
-const express = require('express')
-const bodyParser = require('body-parser')
+const express = require('express');
+const bodyParser = require('body-parser');
 var logger = require('morgan');
 var Sequelize = require('sequelize');
 var expressJwt = require('express-jwt');
 var nodemailer = require('nodemailer');
 var path = require('path');
 var sequelize = new Sequelize('restaurant_app', 'uroot', '', {
-    dialect: 'mysql',
-    define: {
-        timestamps: false
-    }
+  dialect: 'mysql',
+  define: {
+    timestamps: false
+  }
 });
 
 const userTable = sequelize.import('./models/users');
@@ -36,14 +36,19 @@ const app = express();
 
 app.use(express.static(path.join(__dirname, '../client/dist')));
 
-app.use(function(req, res, next) {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    //  res.setHeader("Access-Control-Allow-Origin", "http://https://616f41467de44aa9ac47d1a7ee0281b6.vfs.cloud9.us-east-2.amazonaws.com");
-    res.header("Access-Control-Allow-Credentials", "true");
-    res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT, DELETE");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization ");
-    next();
-
+app.use(function (req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  //  res.setHeader("Access-Control-Allow-Origin", "http://https://616f41467de44aa9ac47d1a7ee0281b6.vfs.cloud9.us-east-2.amazonaws.com");
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header(
+    'Access-Control-Allow-Methods',
+    'GET,HEAD,OPTIONS,POST,PUT, DELETE'
+  );
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization '
+  );
+  next();
 });
 
 // app.use(expressJwt({
@@ -63,14 +68,14 @@ app.use(function(req, res, next) {
 //         '/inline.bundle.js.map', '/polyfills.bundle.js.map', '/styles.bundle.js.map', '/vendor.bundle.js.map', '/main.bundle.js.map']
 // }));
 
-
 app.get('/api/create', (req, res) => {
-    sequelize.sync({ force: true })
-        .then(() => res.status(201).send('tables created'))
-        .catch((err) => {
-            console.warn(err);
-            res.status(500).send('error...');
-        })
+  sequelize
+    .sync({ force: true })
+    .then(() => res.status(201).send('tables created'))
+    .catch((err) => {
+      console.warn(err);
+      res.status(500).send('error...');
+    });
 });
 
 app.use(bodyParser.json());
@@ -89,8 +94,8 @@ app.get('*', (req, res) => {
 });
 
 app.use((err, req, res, next) => {
-    console.warn(err);
-    res.status(500).send('some error...');
+  console.warn(err);
+  res.status(500).send('some error...');
 });
 
 app.listen(8080, function () {

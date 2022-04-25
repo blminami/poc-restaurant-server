@@ -1,52 +1,134 @@
 <app-main-menu></app-main-menu>
 
 <main>
-     <p-growl [(value)]="msgs"></p-growl> 
-    <div class="innertube">
-        <div class="container">
-            <div class="buttonsRoot" *ngIf="user.username === 'root@root'">
-                <button id="addItem" data-toggle="modal" data-backdrop="static" data-target="#myModal" class="cursor btn btn-primary" (click)="resetItemSelected()">
-                    <span class="glyphicon glyphicon-plus"></span> Add Item Menu</button>
-                <button id="addItem" data-toggle="modal" data-backdrop="static" data-target="#myModal2" class="cursor btn btn-info">
-                    <span class="glyphicon glyphicon-plus"></span> Add Restaurant</button>
-            </div>
-            <div>
-                <button id="firstButton" type="button" class="btn btn-default" (click)="changeToSalad()">Salad</button>
-                <button id="secondButton" type="button" class="btn btn-default" (click)="changeToPizza()">Pizza</button>
-                <button id="thirdButton" type="button" class="btn btn-default" (click)="changeToPasta()">Pasta</button>
-                <button id="fourthButton" type="button" class="btn btn-default" (click)="changeToDrinks()">Drinks</button>
-                <button id="fifthButton" type="button" class="btn btn-default" (click)="changeToCocktails()">Cocktails</button>
-            </div>
+  <p-growl [(value)]="msgs"></p-growl>
+  <div class="innertube">
+    <div class="container">
+      <div class="buttonsRoot" *ngIf="user.username === 'root@root'">
+        <button
+          id="addItem"
+          data-toggle="modal"
+          data-backdrop="static"
+          data-target="#myModal"
+          class="cursor btn btn-primary"
+          (click)="resetItemSelected()"
+        >
+          <span class="glyphicon glyphicon-plus"></span> Add Item Menu
+        </button>
+        <button
+          id="addItem"
+          data-toggle="modal"
+          data-backdrop="static"
+          data-target="#myModal2"
+          class="cursor btn btn-info"
+        >
+          <span class="glyphicon glyphicon-plus"></span> Add Restaurant
+        </button>
+      </div>
+      <div>
+        <button
+          id="firstButton"
+          type="button"
+          class="btn btn-default"
+          (click)="changeToSalad()"
+        >
+          Salad
+        </button>
+        <button
+          id="secondButton"
+          type="button"
+          class="btn btn-default"
+          (click)="changeToPizza()"
+        >
+          Pizza
+        </button>
+        <button
+          id="thirdButton"
+          type="button"
+          class="btn btn-default"
+          (click)="changeToPasta()"
+        >
+          Pasta
+        </button>
+        <button
+          id="fourthButton"
+          type="button"
+          class="btn btn-default"
+          (click)="changeToDrinks()"
+        >
+          Drinks
+        </button>
+        <button
+          id="fifthButton"
+          type="button"
+          class="btn btn-default"
+          (click)="changeToCocktails()"
+        >
+          Cocktails
+        </button>
+      </div>
 
-            <div class="displayCards" *ngFor="let item of arrayMenuItems" [class.selected]="item === itemSelected" (click)="onSelect(item)">
-                <div class="col-sm-4">
-                    <div class="card" style="width: 20rem;">
-                        <button *ngIf="user.username === 'root@root'" (click)="deleteMenuItem()" type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <img class="card-img-top" src='{{item.image}}' alt="Card image cap">
-                        <div class="card-body">
-                            <h4 class="card-title">{{item.foodType}}</h4>
-                            <p class="card-text">{{item.description}}</p>
-                        </div>
-                        <div class="card-footer pull-right">
-                            <button *ngIf="user.username !== 'root@root'" class="btn btn-danger add-to-cart" (click)="addToCart(item)">Add to cart</button>
-                            <button *ngIf="user.username === 'root@root'" class="btn btn-danger add-to-cart" data-toggle="modal" data-backdrop="static" data-target="#myModal">Select item</button>
-                        </div>
-                        <div class="card-footer pull-left" style="color:red">
-                            {{item.price}}.00
-                        </div>
-                    </div>
-                </div>
+      <div
+        class="displayCards"
+        *ngFor="let item of arrayMenuItems"
+        [class.selected]="item === itemSelected"
+        (click)="onSelect(item)"
+      >
+        <div class="col-sm-4">
+          <div class="card" style="width: 20rem">
+            <button
+              *ngIf="user.username === 'root@root'"
+              (click)="deleteMenuItem()"
+              type="button"
+              class="close"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <img
+              class="card-img-top"
+              src="{{ item.image }}"
+              alt="Card image cap"
+            />
+            <div class="card-body">
+              <h4 class="card-title">{{ item.foodType }}</h4>
+              <p class="card-text">{{ item.description }}</p>
             </div>
+            <div class="card-footer pull-right">
+              <button
+                *ngIf="user.username !== 'root@root'"
+                class="btn btn-danger add-to-cart"
+                (click)="addToCart(item)"
+              >
+                Add to cart
+              </button>
+              <button
+                *ngIf="user.username === 'root@root'"
+                class="btn btn-danger add-to-cart"
+                data-toggle="modal"
+                data-backdrop="static"
+                data-target="#myModal"
+              >
+                Select item
+              </button>
+            </div>
+            <div class="card-footer pull-left" style="color: red">
+              {{ item.price }}.00
+            </div>
+          </div>
         </div>
-        <div *ngIf="user.username === 'root@root'">
-            <app-home-page-modal [menuItem]="itemSelected" [trigger]="trigger" (notify)="onNotify($event)"></app-home-page-modal>
-        </div>
-
-        <div *ngIf="user.username === 'root@root'">
-            <app-add-restaurants-modal></app-add-restaurants-modal>
-        </div>
+      </div>
+    </div>
+    <div *ngIf="user.username === 'root@root'">
+      <app-home-page-modal
+        [menuItem]="itemSelected"
+        [trigger]="trigger"
+        (notify)="onNotify($event)"
+      ></app-home-page-modal>
     </div>
 
-
-
+    <div *ngIf="user.username === 'root@root'">
+      <app-add-restaurants-modal></app-add-restaurants-modal>
+    </div>
+  </div>
 </main>

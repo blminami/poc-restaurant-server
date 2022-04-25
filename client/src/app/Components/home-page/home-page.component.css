@@ -1,65 +1,62 @@
 body {
-    background-color: whitesmoke;
+  background-color: whitesmoke;
 }
 
 main {
-    right: 0;
-    bottom: 0;
-    overflow: auto;
-    background: whitesmoke;
-    margin-left: 150px;
-    overflow-x: hidden;
+  right: 0;
+  bottom: 0;
+  overflow: auto;
+  background: whitesmoke;
+  margin-left: 150px;
+  overflow-x: hidden;
 }
 
 .container {
-    background: white;
-    margin: 10px;
-    width: 100%;
-    -webkit-box-shadow: 1px -4px 49px 2px rgba(0, 0, 0, 0.47);
-    -moz-box-shadow: 1px -4px 49px 2px rgba(0, 0, 0, 0.47);
-    box-shadow: 1px -4px 49px 2px rgba(0, 0, 0, 0.47);
+  background: white;
+  margin: 10px;
+  width: 100%;
+  -webkit-box-shadow: 1px -4px 49px 2px rgba(0, 0, 0, 0.47);
+  -moz-box-shadow: 1px -4px 49px 2px rgba(0, 0, 0, 0.47);
+  box-shadow: 1px -4px 49px 2px rgba(0, 0, 0, 0.47);
 }
 
 .innertube {
-    background: white;
-    margin-left: 22px;
-    margin-right: 22px;
-    margin-top: 10px;
-
+  background: white;
+  margin-left: 22px;
+  margin-right: 22px;
+  margin-top: 10px;
 }
-
 
 #firstButton,
 #secondButton,
 #thirdButton,
 #fourthButton,
 #fifthButton {
-    
-    margin-bottom: 10px;
-    font-weight: bold;
-    color: red;
-    margin-top:10px;
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: red;
+  margin-top: 10px;
 }
-#firstButton{
-    margin-left: 30%;
+#firstButton {
+  margin-left: 30%;
 }
-.card-img-top{
-    width:160px;
-    height: 110px;
-    margin-top:10px;
+.card-img-top {
+  width: 160px;
+  height: 110px;
+  margin-top: 10px;
 }
-.add-to-cart{
-    margin-bottom: 10px;
+.add-to-cart {
+  margin-bottom: 10px;
 }
-.displayCards{
-    display: inline-block;
-    border: 1px solid black;  
-    margin-left: 20px;
-    height: 300px;
+.displayCards {
+  display: inline-block;
+  border: 1px solid black;
+  margin-left: 20px;
+  height: 300px;
 }
-.card-body{
-   height: 120px;
+.card-body {
+  height: 120px;
 }
-.buttonsRoot{
-    margin-top:10px;
+.buttonsRoot {
+  margin-top: 10px;
 }

@@ -6,45 +6,47 @@ const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 var router = express.Router();
 
-
 var email = process.env.MAILER_EMAIL_ID || 'mail@gmai.com',
-    pass = process.env.MAILER_PASSWORD || 'password'
-
+  pass = process.env.MAILER_PASSWORD || 'password';
 
 var smtpTransport = nodemailer.createTransport({
-    service: process.env.MAILER_SERVICE_PROVIDER || 'Gmail',
-    secure: true,
-    port: 465,
-    auth: {
-        user: email,
-        pass: pass
-    }
+  service: process.env.MAILER_SERVICE_PROVIDER || 'Gmail',
+  secure: true,
+  port: 465,
+  auth: {
+    user: email,
+    pass: pass
+  }
 });
 
-router.post('/', function(req, res, next) {
-    models.user.findOne({
-            where: {
-                resetPasswordToken: req.body.token,
-                resetPasswordExpires: {
-                    [Op.gt]: Date.now()
-                }
-            }
-        })
-        .then((user) => {
-            if (user) {
-                if (req.body.password === req.body.confirmPassword) {
-                    user.hash = bcrypt.hashSync(req.body.password, 10);
-                    user.resetPasswordToken = undefined;
-                    user.resetPasswordExpires = undefined;
-                    models.user.findOne({ where: { username: user.username } })
-                        .then((user) => {
-                            user.update({
-                                    hash: user.hash,
-                                    resetPasswordToken: user.resetPasswordToken,
-                                    resetPasswordExpires: user.resetPasswordExpires
-                                })
-                                .then((user) => {
-                                    var htmlBody = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+router.post('/', function (req, res, next) {
+  models.user
+    .findOne({
+      where: {
+        resetPasswordToken: req.body.token,
+        resetPasswordExpires: {
+          [Op.gt]: Date.now()
+        }
+      }
+    })
+    .then((user) => {
+      if (user) {
+        if (req.body.password === req.body.confirmPassword) {
+          user.hash = bcrypt.hashSync(req.body.password, 10);
+          user.resetPasswordToken = undefined;
+          user.resetPasswordExpires = undefined;
+          models.user
+            .findOne({ where: { username: user.username } })
+            .then((user) => {
+              user
+                .update({
+                  hash: user.hash,
+                  resetPasswordToken: user.resetPasswordToken,
+                  resetPasswordExpires: user.resetPasswordExpires
+                })
+                .then((user) => {
+                  var htmlBody =
+                    `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -87,8 +89,14 @@ width: 100% !important; height: 100%; margin: 0; line-height: 1.4; background-co
                   
                   <tr>
                     <td class="content-cell" style="box-sizing: border-box; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; padding: 35px; word-break: break-word;">
-                      <h1 style="box-sizing: border-box; color: #2F3133; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 19px; font-weight: bold; margin-top: 0;" align="left">Hi ` + user.firstName + " " + user.lastName + `,</h1>
-                      <p style="box-sizing: border-box; color: #74787E; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 16px; line-height: 1.5em; margin-top: 0;" align="left">This email is to confirm that you recently changed your password for your ` + user.username + ` account.
+                      <h1 style="box-sizing: border-box; color: #2F3133; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 19px; font-weight: bold; margin-top: 0;" align="left">Hi ` +
+                    user.firstName +
+                    ' ' +
+                    user.lastName +
+                    `,</h1>
+                      <p style="box-sizing: border-box; color: #74787E; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 16px; line-height: 1.5em; margin-top: 0;" align="left">This email is to confirm that you recently changed your password for your ` +
+                    user.username +
+                    ` account.
                       <p style="box-sizing: border-box; color: #74787E; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 16px; line-height: 1.5em; margin-top: 0;" align="left">Thanks,
                         <br />The xxxxxxx Team</p>
                     </td>
@@ -102,41 +110,37 @@ width: 100% !important; height: 100%; margin: 0; line-height: 1.4; background-co
       </tr>
     </table>
   </body>
-</html>`
-                                    var data = {
-                                        to: user.email,
-                                        from: email,
-                                        subject: 'Password changed',
-                                        html: htmlBody
-                                    };
-                                    smtpTransport.sendMail(data, function(err) {
-                                        if (!err) {
-                                            return res.json({ message: 'Password reset' });
-                                        }
-                                        else {
-                                            return console.log(err);
-                                        }
-                                    });
-                                });
-                        })
-                        .catch((err) => next(err));
-                }
-                else {
-                    return res.status(422).send({
-                        message: 'Passwords do not match'
-                    });
-                }
-            }
-            else {
-                return res.status(400).send({
-                    message: 'Password reset token is invalid or has expired.'
+</html>`;
+                  var data = {
+                    to: user.email,
+                    from: email,
+                    subject: 'Password changed',
+                    html: htmlBody
+                  };
+                  smtpTransport.sendMail(data, function (err) {
+                    if (!err) {
+                      return res.json({ message: 'Password reset' });
+                    } else {
+                      return console.log(err);
+                    }
+                  });
                 });
-            }
-        })
-        .catch((err) => next(err))
+            })
+            .catch((err) => next(err));
+        } else {
+          return res.status(422).send({
+            message: 'Passwords do not match'
+          });
+        }
+      } else {
+        return res.status(400).send({
+          message: 'Password reset token is invalid or has expired.'
+        });
+      }
+    })
+    .catch((err) => next(err));
 
-    //router.post
+  //router.post
 });
-
 
 module.exports = router;
