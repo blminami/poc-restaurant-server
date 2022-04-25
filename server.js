@@ -1,11 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-var logger = require('morgan');
-var Sequelize = require('sequelize');
-var expressJwt = require('express-jwt');
-var nodemailer = require('nodemailer');
-var path = require('path');
-var sequelize = new Sequelize('restaurant_app', 'uroot', '', {
+const logger = require('morgan');
+const Sequelize = require('sequelize');
+const path = require('path');
+const sequelize = new Sequelize('restaurant_app', 'uroot', '', {
   dialect: 'mysql',
   define: {
     timestamps: false
@@ -15,7 +13,7 @@ var sequelize = new Sequelize('restaurant_app', 'uroot', '', {
 const userTable = sequelize.import('./models/users');
 const orderTable = sequelize.import('./models/orders');
 const restaurantTable = sequelize.import('./models/restaurants');
-const menuItemTable = sequelize.import('./models/menuItems');
+const menuItemTable = sequelize.import('./models/menu-items');
 const intermediatesTable = sequelize.import('./models/intermediates');
 
 userTable.hasMany(orderTable);
@@ -24,13 +22,13 @@ restaurantTable.hasMany(orderTable);
 orderTable.belongsToMany(menuItemTable, { through: intermediatesTable });
 menuItemTable.belongsToMany(orderTable, { through: intermediatesTable });
 
-var users = require('./routes/users');
-var orders = require('./routes/orders');
-var restaurants = require('./routes/restaurants');
-var intermediates = require('./routes/intermediates');
-var menuItems = require('./routes/menuItems');
-var forgotPassword = require('./routes/forgotPassword');
-var resetPassword = require('./routes/resetPassword');
+const users = require('./routes/users.route');
+const orders = require('./routes/orders.route');
+const restaurants = require('./routes/restaurants.route');
+const intermediates = require('./routes/intermediates.route');
+const menuItems = require('./routes/menu-items.route');
+const forgotPassword = require('./routes/forgot-password.route');
+const resetPassword = require('./routes/reset-password.route');
 
 const app = express();
 

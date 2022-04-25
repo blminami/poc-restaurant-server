@@ -1,16 +1,17 @@
-var express = require('express');
-var path = require('path');
-var async = require('async');
-var crypto = require('crypto');
-let models = require('../models/');
-var nodemailer = require('nodemailer');
+const express = require('express');
+const router = express.Router();
+let models = require('../models');
+const userService = require('../services/user.service.js');
+const nodemailer = require('nodemailer');
 
-var router = express.Router();
+router.post('/authenticate', authenticate);
+router.post('/register', register);
+router.get('/current', getCurrent);
 
-var email = process.env.MAILER_EMAIL_ID || 'mail@gmail.com',
-  pass = process.env.MAILER_PASSWORD || 'pasword';
+const email = process.env.MAILER_EMAIL_ID;
+pass = process.env.MAILER_PASSWORD;
 
-var smtpTransport = nodemailer.createTransport({
+const smtpTransport = nodemailer.createTransport({
   service: process.env.MAILER_SERVICE_PROVIDER || 'Gmail',
   secure: true,
   port: 465,
@@ -20,44 +21,54 @@ var smtpTransport = nodemailer.createTransport({
   }
 });
 
-router.post('/', function (req, res, next) {
-  console.log(req.body);
-  async.waterfall(
-    [
-      function (done) {
-        models.user
-          .findOne({ where: { email: req.body.email } })
-          .then((userFound) => {
-            if (userFound) {
-              var user = userFound.dataValues;
+router.get('', (req, res) => {
+  models.user
+    .findAll()
+    .then((users) => res.status(200).json(users))
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send('oups...');
+    });
+});
 
-              crypto.randomBytes(20, function (err, buffer) {
-                if (err) {
-                  next(err);
-                }
-                var token = buffer.toString('hex');
+router.post('', (req, res) => {
+  models.user
+    .create(req.body)
+    .then(() => res.status(200).send('yey'))
+    .catch(() => res.status(500).send('oups...'));
+});
 
-                models.user
-                  .findOne({ where: { email: req.body.email } })
-                  .then((user) => {
-                    user
-                      .update({
-                        resetPasswordToken: token,
-                        resetPasswordExpires: Date.now() + 86400000
-                      })
-                      .then((new_user) => {
-                        console.log(new_user.dataValues);
-                        var url =
-                          'http://app-restaurant-narcisaminca.c9users.io:8081/reset-password/token/' +
-                          token;
+module.exports = router;
 
-                        var htmlBody =
-                          `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+function authenticate(req, res) {
+  userService
+    .authenticate(req.body.username, req.body.password)
+    .then(function (user) {
+      if (user) {
+        // authentication successful
+        res.send(user);
+      } else {
+        // authentication failed
+        res.status(400).send('Username or password is incorrect');
+      }
+    })
+    .catch(function (err) {
+      res.status(400).send(err);
+    });
+}
+
+function register(req, res) {
+  console.log('Registerrrr');
+  userService
+    .create(req.body)
+    .then(function () {
+      const htmlBody =
+        `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>Set up a new password for your account</title>
+    <title>Invitation</title>
     
     
   </head>
@@ -79,14 +90,15 @@ width: 100% !important; height: 100%; margin: 0; line-height: 1.4; background-co
   }
 }
 </style>
-    <span class="preheader" style="box-sizing: border-box; display: none !important; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 1px; line-height: 1px; max-height: 0; max-width: 0; mso-hide: all; opacity: 0; overflow: hidden; visibility: hidden;">Use this link to reset your password. The link is only valid for 24 hours.</span>
+    <span class="preheader" style="box-sizing: border-box; display: none !important; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 1px; line-height: 1px; max-height: 0; max-width: 0; mso-hide: all; opacity: 0; overflow: hidden; visibility: hidden;">Invitation for using App.</span>
     <table class="email-wrapper" width="100%" cellpadding="0" cellspacing="0" style="box-sizing: border-box; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; margin: 0; padding: 0; width: 100%;" bgcolor="#F2F4F6">
       <tr>
         <td align="center" style="box-sizing: border-box; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; word-break: break-word;">
           <table class="email-content" width="100%" cellpadding="0" cellspacing="0" style="box-sizing: border-box; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; margin: 0; padding: 0; width: 100%;">
             <tr>
               <td class="email-masthead" style="box-sizing: border-box; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; padding: 25px 0; word-break: break-word;" align="center">
-                APP </td>
+                APP
+              </td>
             </tr>
             
             <tr>
@@ -95,13 +107,12 @@ width: 100% !important; height: 100%; margin: 0; line-height: 1.4; background-co
                   
                   <tr>
                     <td class="content-cell" style="box-sizing: border-box; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; padding: 35px; word-break: break-word;">
-                      <h1 style="box-sizing: border-box; color: #2F3133; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 19px; font-weight: bold; margin-top: 0;" align="left">Hi ` +
-                          new_user.dataValues.lastName +
-                          ' ' +
-                          new_user.dataValues.firstName +
-                          `,</h1>
-                      <p style="box-sizing: border-box; color: #74787E; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 16px; line-height: 1.5em; margin-top: 0;" align="left">You recently requested to reset your password for your ` +
-                          ` account. Use the button below to reset it. <strong style="box-sizing: border-box; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;">This password reset is only valid for the next 24 hours.</strong></p>
+                      <h1 style="box-sizing: border-box; color: #2F3133; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 19px; font-weight: bold; margin-top: 0;" align="left">Hi, ` +
+        req.body.firstName +
+        ' ' +
+        req.body.lastName +
+        `!</h1>
+                      <p style="box-sizing: border-box; color: #74787E; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 16px; line-height: 1.5em; margin-top: 0;" align="left">Welcome! We’re thrilled to have you join our community.Use the button below to set up your account and get started:</p>
                       
                       <table class="body-action" align="center" width="100%" cellpadding="0" cellspacing="0" style="box-sizing: border-box; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; margin: 30px auto; padding: 0; text-align: center; width: 100%;">
                         <tr>
@@ -113,9 +124,7 @@ width: 100% !important; height: 100%; margin: 0; line-height: 1.4; background-co
                                   <table border="0" cellspacing="0" cellpadding="0" style="box-sizing: border-box; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;">
                                     <tr>
                                       <td style="box-sizing: border-box; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; word-break: break-word;">
-                                        <a href="` +
-                          url +
-                          `" class="button button--green" target="_blank" style="-webkit-text-size-adjust: none; background: #22BC66; border-color: #22bc66; border-radius: 3px; border-style: solid; border-width: 10px 18px; box-shadow: 0 2px 3px rgba(0, 0, 0, 0.16); box-sizing: border-box; color: #FFF; display: inline-block; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; text-decoration: none;">Reset your password</a>
+                                        <a href="http://DESKTOP-IV3VNV7:4200/forgotpassword" class="button button--" target="_blank" style="-webkit-text-size-adjust: none; background: #3869D4; border-color: #3869d4; border-radius: 3px; border-style: solid; border-width: 10px 18px; box-shadow: 0 2px 3px rgba(0, 0, 0, 0.16); box-sizing: border-box; color: #FFF; display: inline-block; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; text-decoration: none;">Set up account</a>
                                       </td>
                                     </tr>
                                   </table>
@@ -124,17 +133,16 @@ width: 100% !important; height: 100%; margin: 0; line-height: 1.4; background-co
                             </table>
                           </td>
                         </tr>
-                      </table> 
-                      <p style="box-sizing: border-box; color: #74787E; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 16px; line-height: 1.5em; margin-top: 0;" align="left">Thanks,
-                        <br />The xxxxxxxx Team</p>
+                      </table>
+                      <p style="box-sizing: border-box; color: #74787E; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 16px; line-height: 1.5em; margin-top: 0;" align="left">If you have any questions for us, you can reply to this email and it will go right to them.</p>
+                      <p style="box-sizing: border-box; color: #74787E; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 16px; line-height: 1.5em; margin-top: 0;" align="left">Welcome aboard,
+                        <br />The App_Restaurant Team</p>
                       
                       <table class="body-sub" style="border-top-color: #EDEFF2; border-top-style: solid; border-top-width: 1px; box-sizing: border-box; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; margin-top: 25px; padding-top: 25px;">
                         <tr>
                           <td style="box-sizing: border-box; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; word-break: break-word;">
                             <p class="sub" style="box-sizing: border-box; color: #74787E; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 12px; line-height: 1.5em; margin-top: 0;" align="left">If you’re having trouble with the button above, copy and paste the URL below into your web browser.</p>
-                            <p class="sub" style="box-sizing: border-box; color: #74787E; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 12px; line-height: 1.5em; margin-top: 0;" align="left">` +
-                          url +
-                          `</p>
+                            <p class="sub" style="box-sizing: border-box; color: #74787E; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 12px; line-height: 1.5em; margin-top: 0;" align="left">http://DESKTOP-IV3VNV7:4200/forgotpassword</p>
                           </td>
                         </tr>
                       </table>
@@ -143,46 +151,44 @@ width: 100% !important; height: 100%; margin: 0; line-height: 1.4; background-co
                 </table>
               </td>
             </tr>
+           
           </table>
         </td>
       </tr>
     </table>
   </body>
 </html>`;
-                        var data = {
-                          to: req.body.email,
-                          from: 'minca.narcisa@gmail.com',
-                          subject: 'Password reset',
-                          html: htmlBody
-                        };
+      const data = {
+        to: req.body.email,
+        from: email,
+        subject: 'Invitation',
+        html: htmlBody
+      };
+      smtpTransport.sendMail(data, function (err) {
+        if (!err) {
+          return res.json({ message: 'Password reset' });
+        } else {
+          return console.log(err);
+        }
+      });
+      res.sendStatus(200);
+    })
+    .catch(function (err) {
+      res.status(400).send(err);
+    });
+}
 
-                        smtpTransport.sendMail(data, function (err) {
-                          if (!err) {
-                            return res.json({
-                              message:
-                                'Kindly check your email for further instructions'
-                            });
-                          } else {
-                            console.log(err);
-                            return done(err);
-                          }
-                        });
-                      });
-                  })
-                  .catch((err) => next(err));
-              });
-            } else {
-              done('User not found.');
-            }
-          })
-          .catch((err) => console.log(err));
+function getCurrent(req, res) {
+  userService
+    .getById(req.user.sub)
+    .then(function (user) {
+      if (user) {
+        res.send(user);
+      } else {
+        res.sendStatus(404);
       }
-    ],
-    function (err) {
-      console.log('Err: ', err);
-      return res.status(422).json({ message: err });
-    }
-  );
-});
-
-module.exports = router;
+    })
+    .catch(function (err) {
+      res.status(400).send(err);
+    });
+}

@@ -1,11 +1,11 @@
-var _ = require('lodash');
-var jwt = require('jsonwebtoken');
-var bcrypt = require('bcryptjs');
-var Q = require('q');
+const _ = require('lodash');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+const Q = require('q');
 
-var models = require('../models');
+const models = require('../models');
 
-var service = { authenticate, getById, create };
+const service = { authenticate, getById, create };
 
 service.authenticate = authenticate;
 service.getById = getById;
@@ -14,7 +14,7 @@ service.create = create;
 module.exports = service;
 
 function authenticate(username, password) {
-  var deferred = Q.defer();
+  const deferred = Q.defer();
   models.user
     .findOne({ where: { username: username } })
     .then((user) => {
@@ -39,7 +39,7 @@ function authenticate(username, password) {
 }
 
 function getById(_id) {
-  var deferred = Q.defer();
+  const deferred = Q.defer();
 
   models.user
     .findById(_id)
@@ -58,7 +58,7 @@ function getById(_id) {
 }
 
 function create(userParam) {
-  var deferred = Q.defer();
+  const deferred = Q.defer();
   // validation
   models.user
     .findOne({ where: { username: userParam.username } })
@@ -77,7 +77,7 @@ function create(userParam) {
 
   function createUser() {
     // set user object to userParam without the cleartext password
-    var user = _.omit(userParam, 'password');
+    const user = _.omit(userParam, 'password');
 
     // add hashed password to user object
     user.hash = bcrypt.hashSync(userParam.password, 10);

@@ -1,14 +1,14 @@
-var express = require('express');
-var router = express.Router();
-let models = require('../models/');
-var NodeGeocoder = require('node-geocoder');
+const express = require('express');
+const router = express.Router();
+let models = require('../models');
+const NodeGeocoder = require('node-geocoder');
 
-var options = {
+const options = {
   provider: 'google',
   httpAdapter: 'https' // Default
 };
 
-var geocoder = NodeGeocoder(options);
+const geocoder = NodeGeocoder(options);
 
 models.restaurant.hasMany(models.order);
 
@@ -36,13 +36,13 @@ router.get('/:id', (req, res, next) => {
 
 //Add a new record in restaurant table
 router.post('/', (req, res, next) => {
-  var stringAddress =
+  const stringAddress =
     req.body.streetNumber + ' ' + req.body.street + ' ' + req.body.city;
   console.log(stringAddress);
   geocoder
     .geocode(stringAddress)
     .then((address) => {
-      var objRestaurant = {};
+      const objRestaurant = {};
       objRestaurant.city = req.body.city;
       objRestaurant.street = req.body.street;
       objRestaurant.streetNumber = req.body.streetNumber;

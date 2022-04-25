@@ -1,6 +1,6 @@
-var express = require('express');
-var router = express.Router();
-let models = require('../models/');
+const express = require('express');
+const router = express.Router();
+let models = require('../models');
 
 models.order.belongsToMany(models.menuItem, { through: models.intermediate });
 models.menuItem.belongsToMany(models.order, { through: models.intermediate });
@@ -30,7 +30,7 @@ router.get('/orders/:oid', (req, res, next) => {
 
 //Add new record
 router.post('/order/:oid/menuItem/:mid', (req, res, next) => {
-  var trigger = false;
+  const trigger = false;
   models.order
     .findById(req.params.oid)
     .then((order) => {
@@ -59,7 +59,6 @@ router.post('/order/:oid/menuItem/:mid', (req, res, next) => {
         }
       }
     })
-
     .catch((err) => next(err));
 });
 

@@ -1,6 +1,6 @@
-var express = require('express');
-var router = express.Router();
-let models = require('../models/');
+const express = require('express');
+const router = express.Router();
+let models = require('../models');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 
@@ -14,9 +14,9 @@ router.get('/', (req, res, next) => {
 
 //Get item by ID
 router.get('/:id', (req, res, next) => {
-  var ids = req.params.id.split(',');
-  var arrayIds = [];
-  for (var i = 0; i < ids.length; i++) {
+  const ids = req.params.id.split(',');
+  const arrayIds = [];
+  for (let i = 0; i < ids.length; i++) {
     arrayIds.push(ids[i]);
   }
   console.log(arrayIds);

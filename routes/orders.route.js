@@ -1,6 +1,6 @@
-var express = require('express');
-var router = express.Router();
-let models = require('../models/');
+const express = require('express');
+const router = express.Router();
+let models = require('../models');
 
 models.order.belongsTo(models.user);
 models.order.belongsTo(models.restaurant);
@@ -62,7 +62,7 @@ router.get('/:trigger/:id', (req, res) => {
 
 //Create new order
 router.post('/restaurant/:rid/user/:uid', (req, res, next) => {
-  var trigger = false;
+  const trigger = false;
   models.user
     .findById(req.params.uid)
     .then((user) => {
